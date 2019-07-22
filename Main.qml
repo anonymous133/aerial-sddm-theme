@@ -1,8 +1,10 @@
-import QtQuick 2.0
+import QtQuick 2.1
 import SddmComponents 2.0
 import QtMultimedia 5.7
 
 import "components"
+
+
 
 Rectangle {
     // Main Container
@@ -41,12 +43,7 @@ Rectangle {
         color: "black"
     }
 
-    // Set Background Image
-    Image {
-        anchors.fill: parent
-        source: config.background
-        fillMode: Image.PreserveAspectCrop
-    }
+    property bool playedAnimation: false;
 
     // Set Background Video1
     MediaPlayer {
@@ -55,7 +52,30 @@ Rectangle {
         playlist: Playlist {
             id: playlist1
             playbackMode: Playlist.Random
-            onLoaded: { mediaplayer1.play() }
+            onLoaded: {
+
+            mediaplayer1.play() }
+        }
+
+        onPositionChanged: {
+
+          if(position >= 1 && position <= 1000 && !playedAnimation) {
+              fadeInVideo.start();
+              playedAnimation: true;
+          }
+
+          if(position >= 24000 && position <= 25000) {
+              fadeOutVideoB.start();
+          }
+
+          if(position >= 26000 && position <= 27800) {
+              /*mediaplayer1.stop();*/
+              mediaplayer1.seek(0);
+              playlist1.next();
+              mediaplayer1.play();
+              fadeImage.opacity = 1;
+              fadeImageB.opacity = 0;
+          }
         }
     }
 
@@ -63,11 +83,15 @@ Rectangle {
         id: video1
         fillMode: VideoOutput.PreserveAspectCrop
         anchors.fill: parent; source: mediaplayer1
+        opacity: 0
         MouseArea {
             id: mouseArea1
             anchors.fill: parent;
-            //onPressed: {playlist1.shuffle(); playlist1.next();}
-            onPressed: { fader1.state = fader1.state == "off" ? "on" : "off" ; }
+            onPressed: {
+
+                fader1.state = fader1.state == "off" ? "on" : "off" ;
+             }
+             cursorShape: Qt.BlankCursor
         }
         Keys.onPressed: {
             fader1.state = "on";
@@ -77,6 +101,7 @@ Rectangle {
                 password_input_box.focus = true
         }
     }
+
     WallpaperFader {
         id: fader1
         visible: true
@@ -87,93 +112,44 @@ Rectangle {
         footer: login_container
     }
 
-    // Set Background Video2
-    MediaPlayer {
-        id: mediaplayer2
-        autoPlay: true; muted: true
-        playlist: Playlist {
-            id: playlist2; playbackMode: Playlist.Random
-            //onLoaded: { mediaplayer2.play() }
-        }
-    }
-
-    VideoOutput {
-        id: video2
-        fillMode: VideoOutput.PreserveAspectCrop
-        anchors.fill: parent; source: mediaplayer2
-        opacity: 0
-        MouseArea {
-            id: mouseArea2
-            enabled: false
-            anchors.fill: parent;
-            onPressed: { fader2.state = fader2.state == "off" ? "on" : "off" ; }
-        }
-        Behavior on opacity {
-            enabled: true
-            NumberAnimation { easing.type: Easing.InOutQuad; duration: 3000 }
-        }
-        Keys.onPressed: {
-            fader2.state = "on";
-            if (username_input_box.text == "")
-                username_input_box.focus = true
-            else
-                password_input_box.focus = true
-        }
-    }
-
-    WallpaperFader {
-        id: fader2
-        visible: true
+    Image {
+        id: fadeImage
         anchors.fill: parent
-        state: "off"
-        source: video2
-        mainStack: login_container
-        footer: login_container
-    }
+        source: config.background
+        fillMode: Image.PreserveAspectCrop
 
-    property MediaPlayer currentPlayer: mediaplayer1
+        NumberAnimation on opacity {
+          running: false
+          id: fadeInVideo
+          from: 1
+          to: 0
+          duration: 1500
+        }
 
-    // Timer event to handle fade between videos
-    Timer {
-        interval: 1000;
-        running: true; repeat: true
-        onTriggered: {
-            if (currentPlayer.duration != -1 && currentPlayer.position > currentPlayer.duration - 10000) { // pre load the 2nd player
-                if (video2.opacity == 0) { // toogle opacity
-                    mediaplayer2.play()
-                } else
-                    mediaplayer1.play()
-            }
-            if (currentPlayer.duration != -1 && currentPlayer.position > currentPlayer.duration - 3000) { // initiate transition
-                if (video2.opacity == 0) { // toogle opacity
-                    mouseArea1.enabled = false
-                    currentPlayer = mediaplayer2
-                    video2.opacity = 1
-                    triggerTimer.start()
-                    mouseArea2.enabled = true
-                } else {
-                    mouseArea2.enabled = false
-                    currentPlayer = mediaplayer1
-                    video2.opacity = 0
-                    triggerTimer.start()
-                    mouseArea1.enabled = true
-                }
-            }
+        NumberAnimation on opacity {
+          running: false
+          id: fadeOutVideo
+          from: 0
+          to: 1
+          duration: 1500
         }
     }
 
-    Timer { // this timer waits for fade to stop and stops the video
-        id: triggerTimer
-        interval: 4000; running: false; repeat: false
-        onTriggered: {
-            if (video2.opacity == 1)
-                mediaplayer1.stop()
-            else
-                mediaplayer2.stop()
+/* Workaround because on boot the fadeOut does not work with only one image besides that it does in Test Mode */
+    Image {
+        id: fadeImageB
+        anchors.fill: parent
+        source: config.background
+        fillMode: Image.PreserveAspectCrop
+        opacity: 0
+        NumberAnimation on opacity {
+          running: false
+          id: fadeOutVideoB
+          from: 0
+          to: 1
+          duration: 1500
         }
     }
-
-
 
     // Clock and Login Area
     Rectangle {
@@ -193,7 +169,6 @@ Rectangle {
         Rectangle {
             id: login_container
 
-            //y: parent.height * 0.8
             y: clock.y + clock.height + 30
             width: clock.width
             height: parent.height * 0.08
@@ -368,6 +343,20 @@ Rectangle {
         }
     }
 
+    Image {
+        anchors.fill: parent
+        source: config.background
+        fillMode: Image.PreserveAspectCrop
+
+        NumberAnimation on opacity {
+          id: createTextAnimation
+          from: 1
+          to: 0
+          duration: 1500
+        }
+        Component.onCompleted: createTextAnimation.start()
+    }
+
     // Top Bar
     Rectangle {
         id: actionBar
@@ -478,27 +467,19 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        // Set Focus
-        /* if (username_input_box.text == "") */
-        /*     username_input_box.focus = true */
-        /* else */
-        /*     password_input_box.focus = true */
-
         video1.focus = true
 
         // load and randomize playlist
         var time = parseInt(new Date().toLocaleTimeString(Qt.locale(),'h'))
         if ( time >= 5 && time <= 17 ) {
             playlist1.load(Qt.resolvedUrl(config.background_day), 'm3u')
-            playlist2.load(Qt.resolvedUrl(config.background_day), 'm3u')
+
         } else {
             playlist1.load(Qt.resolvedUrl(config.background_night), 'm3u')
-            playlist2.load(Qt.resolvedUrl(config.background_night), 'm3u')
         }
 
         for (var k = 0; k < Math.ceil(Math.random() * 10) ; k++) {
             playlist1.shuffle()
-            playlist2.shuffle()
         }
 
         if (config.showLoginButton == "false") {
@@ -509,4 +490,3 @@ Rectangle {
         clear_passwd_button.visible = false
     }
 }
-

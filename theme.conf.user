@@ -1,11 +1,11 @@
 [General]
 background_day=playlists/day.m3u
 background_night=playlists/night.m3u
-displayFont="Misc Fixed"
+displayFont="SFNS System San Francisco Display"
 passwordLeftMargin=15
-relativePositionX=0.5
-relativePositionY=0.75
+relativePositionX=0.92
+relativePositionY=0.83
 showLoginButton=false
 type=color
 usernameLeftMargin=15
-showTopBar=true
+showTopBar=false
