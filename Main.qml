@@ -24,11 +24,14 @@ Rectangle {
     Connections {
         target: sddm
         onLoginSucceeded: {
+
         }
 
         onLoginFailed: {
             error_message.color = "#dc322f"
             error_message.text = textConstants.loginFailed
+
+            fadeInEverythingAnim.start();
         }
     }
 
@@ -88,7 +91,6 @@ Rectangle {
             id: mouseArea1
             anchors.fill: parent;
             onPressed: {
-
                 fader1.state = fader1.state == "off" ? "on" : "off" ;
              }
              cursorShape: Qt.BlankCursor
@@ -273,7 +275,8 @@ Rectangle {
 
                     Keys.onPressed: {
                         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                            sddm.login(username_input_box.text, password_input_box.text, session.index)
+                            fadeOutEverythingAnim.start();
+                            /*sddm.login(username_input_box.text, password_input_box.text, session.index)*/
                             event.accepted = true
                         }
                     }
@@ -322,7 +325,11 @@ Rectangle {
                     textColor: "white"
                     font: textFont.name
 
-                    onClicked: sddm.login(username_input_box.text, password_input_box.text, session.index)
+                    onClicked: {
+
+                      fadeOutEverythingAnim.start();
+                      /*sddm.login(username_input_box.text, password_input_box.text, session.index)*/
+                    }
 
                     KeyNavigation.backtab: password_input_box
                     KeyNavigation.tab: reboot_button
@@ -352,7 +359,7 @@ Rectangle {
           id: createTextAnimation
           from: 1
           to: 0
-          duration: 1500
+          duration: 2000
         }
         Component.onCompleted: createTextAnimation.start()
     }
@@ -463,6 +470,35 @@ Rectangle {
                 KeyNavigation.backtab: reboot_button
                 KeyNavigation.tab: session
             }
+        }
+    }
+
+    Image {
+        id: fadeOutEverything
+        anchors.fill: parent
+        source: config.background
+        fillMode: Image.PreserveAspectCrop
+        opacity: 0
+        NumberAnimation on opacity {
+          running: false
+          id: fadeOutEverythingAnim
+          from: 0
+          to: 1
+          duration: 1500
+
+          onRunningChanged: {
+                      if(fadeOutEverything.opacity == 1 ){
+                          sddm.login(username_input_box.text, password_input_box.text, session.index)
+                      }
+                }
+        }
+
+        NumberAnimation on opacity {
+          running: false
+          id: fadeInEverythingAnim
+          from: 1
+          to: 0
+          duration: 1500
         }
     }
 
