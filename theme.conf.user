@@ -1,7 +1,7 @@
 [General]
-background_day=playlists/day.m3u
-background_night=playlists/night.m3u
-displayFont="SFNS System San Francisco Display"
+background_day=playlists/day_local.m3u
+background_night=playlists/night_local.m3u
+displayFont="Hack"
 passwordLeftMargin=15
 relativePositionX=0.92
 relativePositionY=0.83
