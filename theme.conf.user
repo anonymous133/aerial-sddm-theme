@@ -2,10 +2,10 @@
 background_day=playlists/day_local.m3u
 background_night=playlists/night_local.m3u
 displayFont="Hack"
-passwordLeftMargin=15
+passwordLeftMargin=0
 relativePositionX=0.92
 relativePositionY=0.83
 showLoginButton=false
 type=color
-usernameLeftMargin=15
+usernameLeftMargin=0
 showTopBar=false

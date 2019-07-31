@@ -194,10 +194,10 @@ Rectangle {
                     height: parent.height * 0.66
                     horizontalAlignment: Text.AlignLeft
                     font.family: textFont.name
-                    font.bold: true
-                    font.pixelSize: 16
+                    font.bold: false
+                    font.pixelSize: 14
                     color: "white"
-                    text: "Username"
+                    /*text: "Username"*/
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -206,8 +206,9 @@ Rectangle {
                     height: parent.height
                     text: userModel.lastUser
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: username_label.right
-                    anchors.leftMargin: config.usernameLeftMargin
+                    anchors.left: parent.left
+                    /*anchors.left: username_label.right
+                    anchors.leftMargin: config.usernameLeftMargin*/
                     anchors.right: parent.right
                     anchors.rightMargin: 0
                     font: textFont.name
@@ -240,12 +241,12 @@ Rectangle {
                 Text {
                     id: password_label
                     width: parent.width * 0.27
-                    text: textConstants.password
+                    /*text: textConstants.password*/
                     anchors.verticalCenter: parent.verticalCenter
                     horizontalAlignment: Text.AlignLeft
                     font.family: textFont.name
-                    font.bold: true
-                    font.pixelSize: 16
+                    font.bold: false
+                    font.pixelSize: 14
                     color: "white"
                 }
 
@@ -257,7 +258,8 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: parent.height // this sets button width, this way its a square
-                    anchors.left: password_label.right
+                    /*anchors.left: password_label.right*/
+                    anchors.left: parent.left
                     anchors.leftMargin: config.passwordLeftMargin
                     borderColor: "transparent"
                     textColor: "white"
